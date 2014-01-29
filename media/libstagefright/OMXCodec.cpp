@@ -5387,9 +5387,8 @@ status_t OMXCodec::pause() {
         return OK;
     }
 #else
-    Mutex::Autolock autoLock(mLock);
-    mPaused = true;
-    return OK;
+    // b2g does not support aosp OMXCodec::pause(). See Bug 919590.
+    return ERROR_UNSUPPORTED;
 #endif
 
 }
