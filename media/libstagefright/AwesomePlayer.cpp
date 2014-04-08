@@ -1,7 +1,5 @@
 /*
  * Copyright (C) 2009 The Android Open Source Project
- * Copyright (c) 2014, The Linux Foundation. All rights reserved.
- * Not a Contribution.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1701,10 +1699,6 @@ status_t AwesomePlayer::initAudioDecoder() {
     ATRACE_CALL();
 
     sp<MetaData> meta = mAudioTrack->getFormat();
-    sp<MetaData> vMeta;
-    if (mVideoTrack != NULL && mVideoSource != NULL) {
-        vMeta = mVideoTrack->getFormat();
-    }
 
     const char *mime;
     CHECK(meta->findCString(kKeyMIMEType, &mime));
@@ -1717,7 +1711,7 @@ status_t AwesomePlayer::initAudioDecoder() {
         streamType = mAudioSink->getAudioStreamType();
     }
 
-    mOffloadAudio = canOffloadStream(meta, (mVideoSource != NULL), vMeta,
+    mOffloadAudio = canOffloadStream(meta, (mVideoSource != NULL),
                                      isStreamingHTTP(), streamType);
 
 #ifdef QCOM_DIRECTTRACK
@@ -1868,7 +1862,7 @@ status_t AwesomePlayer::initAudioDecoder() {
         if (durationUs >= 0) {
             format->setInt64(kKeyDuration, durationUs);
         }
-        mOffloadAudio = canOffloadStream(format, (mVideoSource != NULL), vMeta,
+        mOffloadAudio = canOffloadStream(format, (mVideoSource != NULL),
                                      isStreamingHTTP(), streamType);
     }
 
