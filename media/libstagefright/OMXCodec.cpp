@@ -3316,6 +3316,9 @@ status_t OMXCodec::freeBuffersOnPort(
     }
 
     CHECK(onlyThoseWeOwn || buffers->isEmpty());
+    if (portIndex == kPortIndexOutput) {
+        mFilledBuffers.clear();
+    }
 
     return stickyErr;
 }
@@ -3467,9 +3470,16 @@ void OMXCodec::fillOutputBuffers() {
 #endif
 
     Vector<BufferInfo> *buffers = &mPortBuffers[kPortIndexOutput];
+    Vector<bool> buffersFilled;
+    for (size_t i = 0; i < buffers->size(); ++i) {
+        buffersFilled.push_back(false);
+    }
+    for (List<size_t>::iterator it = mFilledBuffers.begin(); it != mFilledBuffers.end(); ++it) {
+        buffersFilled.editItemAt(*it) = true;
+    }
     for (size_t i = 0; i < buffers->size(); ++i) {
         BufferInfo *info = &buffers->editItemAt(i);
-        if (info->mStatus == OWNED_BY_US) {
+        if (!buffersFilled[i] && info->mStatus == OWNED_BY_US) {
             fillOutputBuffer(&buffers->editItemAt(i));
         }
     }
